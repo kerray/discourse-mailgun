@@ -62,11 +62,13 @@ after_initialize do
     private
 
     def verify_signature
+      Rails.logger.info 'mailgun signature' + params['timestamp'] + ' ' + params['token'] + ' ' +  params['signature'] + ' ' + SiteSetting.mailgun_api_key
       unless ::DiscourseMailgun::Engine.verify_signature(params['timestamp'], params['token'], params['signature'], SiteSetting.mailgun_api_key)
-        render json: {}, :status => :unauthorized
+        render json: params, :status => :unauthorized #{}, :status => :unauthorized
       end
     end
   end
+
 
 
   DiscourseMailgun::Engine.routes.draw do
@@ -77,3 +79,4 @@ after_initialize do
     mount ::DiscourseMailgun::Engine, at: "mailgun"
   end
 end
+
